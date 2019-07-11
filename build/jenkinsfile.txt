@@ -1,0 +1,137 @@
+#!groovy
+
+pipeline {
+    agent { node ('slave') }
+        // wait condition
+        // Input paramter pro stage
+    parameters {
+        string(name: 'drive_straight_1', defaultValue: '0', description: 'walk1')
+        string(name: 'turn_around_1', defaultValue: '0', description: 'rotate1')
+        string(name: 'greet_me', defaultValue: '0', description: 'greetings1')
+        string(name: 'turn_around_2', defaultValue: '0', description: 'rotate2')
+        string(name: 'drive_straight_2', defaultValue: '0', description: 'walk2')
+        string(name: 'turn_around_3', defaultValue: '0', description: 'rotate3')
+        string(name: 'greet_again', defaultValue: '0', description: 'greetings2')
+
+    }
+    stages {
+        stage('drive_straight_1') {
+            steps {
+                // Webhook
+                script {hook = registerWebhook()}
+                echo "Waiting for POST to ${hook.getURL()}"
+
+                // COZMO call
+                echo "Driving distance of ${params.drive_straight_1} mm"
+                httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/drive?dist=${params.drive_straight_1}&webhook=${hook.getURL()}"
+                // Wait for webhook
+                script {data = waitForWebhook hook}
+                echo "Webhook called with data: ${data}"
+            }
+        }
+        stage('turn_around_1') {
+            steps {
+                // Webhook
+                script {hook = registerWebhook()}
+                echo "Waiting for POST to ${hook.getURL()}"
+
+                // COZMO call
+                echo "Turning around for ${params.turn_around_1} degrees"
+                httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/turn?angle=${params.turn_around_1}&webhook=${hook.getURL()}"
+
+                // Wait for webhook
+                script {data = waitForWebhook hook}
+                echo "Webhook called with data: ${data}"
+            }
+        }
+        stage('greet_me') {
+            steps {
+                // Webhook
+                script {hook = registerWebhook()}
+                echo "Waiting for POST to ${hook.getURL()}"
+
+                // COZMO call
+                echo "Msg:  ${params.greet_me} "
+                httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/greet?greeting=${params.greet_me}&webhook=${hook.getURL()}"
+
+                // Wait for webhook
+                script {data = waitForWebhook hook}
+                echo "Webhook called with data: ${data}"
+            }
+        }
+        stage('turn_around_2') {
+            steps {
+                // Webhook
+                script {hook = registerWebhook()}
+                echo "Waiting for POST to ${hook.getURL()}"
+
+                // COZMO call
+                echo "Turning around for ${params.turn_around_2} degrees"
+                httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/turn?angle=${params.turn_around_2}&webhook=${hook.getURL()}"
+
+                // Wait for webhook
+                script {data = waitForWebhook hook}
+                echo "Webhook called with data: ${data}"
+            }
+        }
+        stage('drive_straight_2') {
+            steps {
+                // Webhook
+                script {hook = registerWebhook()}
+                echo "Waiting for POST to ${hook.getURL()}"
+
+                // COZMO call
+                echo "Driving distance of ${params.drive_straight_2} mm"
+                httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/drive?dist=${params.drive_straight_2}&webhook=${hook.getURL()}"
+                // Wait for webhook
+                script {data = waitForWebhook hook}
+                echo "Webhook called with data: ${data}"
+            }
+        }
+        stage('turn_around_3') {
+            steps {
+                // Webhook
+                script {hook = registerWebhook()}
+                echo "Waiting for POST to ${hook.getURL()}"
+
+                // COZMO call
+                echo "Turning around for ${params.turn_around_3 degrees"
+                httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/turn?angle=${params.turn_around_3}&webhook=${hook.getURL()}"
+
+                // Wait for webhook
+                script {data = waitForWebhook hook}
+                echo "Webhook called with data: ${data}"
+            }
+        }
+        stage('greet_again') {
+            steps {
+                // Webhook
+                script {hook = registerWebhook()}
+                echo "Waiting for POST to ${hook.getURL()}"
+
+                // COZMO call
+                echo "Msg:  ${params.greet_again} "
+                httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/greet?greeting=${params.greet_again}&webhook=${hook.getURL()}"
+
+                // Wait for webhook
+                script {data = waitForWebhook hook}
+                echo "Webhook called with data: ${data}"
+            }
+        }
+    }
+    post {
+        always {
+            echo "I'm finished"
+            // Webhook
+            //script {hook = registerWebhook()}
+            //echo "Waiting for POST to ${hook.getURL()}"
+
+            //httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/speak?text=Ichbinfertig&webhook=${hook.getURL()}"
+
+             httpRequest ignoreSslErrors: true, responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/shutdown"
+            // Wait for webhook
+            //script {data = waitForWebhook hook}
+            //echo "Webhook called with data: ${data}"
+        }
+    }
+}
