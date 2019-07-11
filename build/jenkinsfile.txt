@@ -12,7 +12,6 @@ pipeline {
         string(name: 'drive_straight_2', defaultValue: '0', description: 'walk2')
         string(name: 'turn_around_3', defaultValue: '0', description: 'rotate3')
         string(name: 'greet_again', defaultValue: '0', description: 'greetings2')
-
     }
     stages {
         stage('drive_straight_1') {
@@ -95,7 +94,7 @@ pipeline {
                 echo "Waiting for POST to ${hook.getURL()}"
 
                 // COZMO call
-                echo "Turning around for ${params.turn_around_3 degrees"
+                echo "Turning around for ${params.turn_around_3} degrees"
                 httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/turn?angle=${params.turn_around_3}&webhook=${hook.getURL()}"
 
                 // Wait for webhook
