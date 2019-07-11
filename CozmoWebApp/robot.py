@@ -14,7 +14,11 @@ class Robot:
     @staticmethod
     def drive(mm, webhookJenkins):
         print("Drive")
-        _robot.say_text("Cozmo moves " + mm + "mili meters").wait_for_completed()
+        if mm<"0":
+            _robot.say_text("Cozmo moves " + mm + "mili meters backward").wait_for_completed()
+        else:
+            _robot.say_text("Cozmo moves " + mm + "mili meters forward").wait_for_completed()
+
         _robot.drive_straight(distance_mm(mm), speed_mmps(50)).wait_for_completed()
         # webhook call
         print(webhookJenkins)
